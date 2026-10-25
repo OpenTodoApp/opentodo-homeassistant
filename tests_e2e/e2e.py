@@ -95,12 +95,33 @@ def start_containers() -> None:
     sh("docker", "volume", "create", OT_VOLUME)
     sh("docker", "volume", "create", HA_VOLUME)
     sh(
-        "docker", "run", "-d", "--name", OT, "--network", NET, "-p", f"127.0.0.1:{OT_PORT}:8080",
-        "-v", f"{OT_VOLUME}:/data", OT_IMAGE,
+        "docker",
+        "run",
+        "-d",
+        "--name",
+        OT,
+        "--network",
+        NET,
+        "-p",
+        f"127.0.0.1:{OT_PORT}:8080",
+        "-v",
+        f"{OT_VOLUME}:/data",
+        OT_IMAGE,
     )
     sh(
-        "docker", "create", "--name", HA, "--network", NET, "-p", f"127.0.0.1:{HA_PORT}:8123",
-        "-e", "TZ=Europe/Rome", "-v", f"{HA_VOLUME}:/config", HA_IMAGE,
+        "docker",
+        "create",
+        "--name",
+        HA,
+        "--network",
+        NET,
+        "-p",
+        f"127.0.0.1:{HA_PORT}:8123",
+        "-e",
+        "TZ=Europe/Rome",
+        "-v",
+        f"{HA_VOLUME}:/config",
+        HA_IMAGE,
     )
     with tempfile.TemporaryDirectory() as tmp:
         config = Path(tmp) / "config"
@@ -182,7 +203,13 @@ class HomeAssistant:
         self._reader: asyncio.Task[None] | None = None
 
     async def onboard(self) -> None:
-        body = {"client_id": CLIENT_ID, "name": "E2E", "username": "e2e", "password": "e2e-password-123", "language": "en"}
+        body = {
+            "client_id": CLIENT_ID,
+            "name": "E2E",
+            "username": "e2e",
+            "password": "e2e-password-123",
+            "language": "en",
+        }
         async with self.session.post(f"{HA_URL}/api/onboarding/users", json=body) as resp:
             assert resp.status == 200, await resp.text()
             code = (await resp.json())["auth_code"]
@@ -243,13 +270,19 @@ async def run() -> None:
         start_containers()
         await wait_for(session, f"{OT_URL}/healthz")
         await wait_for(session, f"{HA_URL}/api/onboarding", timeout=600)
-        version = sh("docker", "exec", HA, "python", "-c", "from homeassistant.const import __version__; print(__version__)")
+        version = sh(
+            "docker", "exec", HA, "python", "-c", "from homeassistant.const import __version__; print(__version__)"
+        )
         step(f"Home Assistant {version} is up")
 
         ot = OpenTodo(session)
         await ot.setup()
         home = await ot.api("POST", "/projects", {"name": "Home"})
-        await ot.api("POST", "/tasks", {"title": "Water plants", "project_id": home["id"], "due": {"date": date.today().isoformat()}})
+        await ot.api(
+            "POST",
+            "/tasks",
+            {"title": "Water plants", "project_id": home["id"], "due": {"date": date.today().isoformat()}},
+        )
         step("OpenTodo owner, full token, Home project and private network targets ready")
 
         ha = HomeAssistant(session)
@@ -257,12 +290,14 @@ async def run() -> None:
         flow = await ha.rest("POST", "/api/config/config_entries/flow", {"handler": "opentodo"})
         assert flow["type"] == "form" and flow["step_id"] == "user", flow
         bad = await ha.rest(
-            "POST", f"/api/config/config_entries/flow/{flow['flow_id']}",
+            "POST",
+            f"/api/config/config_entries/flow/{flow['flow_id']}",
             {"url": f"http://{OT}:8080", "token": "ot_wrong", "verify_ssl": True},
         )
         assert bad["errors"] == {"base": "invalid_auth"}, bad
         result = await ha.rest(
-            "POST", f"/api/config/config_entries/flow/{flow['flow_id']}",
+            "POST",
+            f"/api/config/config_entries/flow/{flow['flow_id']}",
             {"url": f"http://{OT}:8080", "token": ot.token, "verify_ssl": True},
         )
         assert result["type"] == "create_entry", result
@@ -271,8 +306,12 @@ async def run() -> None:
 
         await ha.connect()
         for event_type in (
-            "opentodo_task_created", "opentodo_task_completed", "opentodo_task_updated",
-            "opentodo_task_reopened", "opentodo_task_deleted", "opentodo_task_assigned",
+            "opentodo_task_created",
+            "opentodo_task_completed",
+            "opentodo_task_updated",
+            "opentodo_task_reopened",
+            "opentodo_task_deleted",
+            "opentodo_task_assigned",
         ):
             await ha.ws({"type": "subscribe_events", "event_type": event_type})
 
@@ -305,35 +344,54 @@ async def run() -> None:
 
         batteries = await ot.task("Buy batteries")
         await ot.api("PATCH", f"/tasks/{batteries['id']}", {"completed_at": int(time.time() * 1000)})
-        await eventually(lambda: _async(ha.fired("opentodo_task_completed", "Buy batteries")), "the completed event", 10)
-        await eventually(lambda: _items_contain(ha, "todo.home", "Buy batteries", "completed"), "batteries completed", 10)
+        await eventually(
+            lambda: _async(ha.fired("opentodo_task_completed", "Buy batteries")), "the completed event", 10
+        )
+        await eventually(
+            lambda: _items_contain(ha, "todo.home", "Buy batteries", "completed"), "batteries completed", 10
+        )
         step("task completed in OpenTodo: completed event and item in Home Assistant")
 
         # Home Assistant -> OpenTodo.
-        await ha.rest("POST", "/api/services/todo/update_item", {"entity_id": "todo.home", "item": "Water plants", "status": "completed"})
+        await ha.rest(
+            "POST",
+            "/api/services/todo/update_item",
+            {"entity_id": "todo.home", "item": "Water plants", "status": "completed"},
+        )
         plants = await ot.task("Water plants")
         assert plants["completed_at"], plants
-        await eventually(lambda: _async(ha.fired("opentodo_task_completed", "Water plants")), "the completed event (from HA)", 10)
+        await eventually(
+            lambda: _async(ha.fired("opentodo_task_completed", "Water plants")), "the completed event (from HA)", 10
+        )
         step("task completed in Home Assistant: completed in OpenTodo, event back through the webhook")
 
-        await ha.rest("POST", "/api/services/todo/add_item", {"entity_id": "todo.inbox", "item": "milk tomorrow #Home p1"})
+        await ha.rest(
+            "POST", "/api/services/todo/add_item", {"entity_id": "todo.inbox", "item": "milk tomorrow #Home p1"}
+        )
         milk = await ot.task("milk")
         tomorrow = (date.today() + timedelta(days=1)).isoformat()
-        assert milk and milk["project_id"] == home["id"] and milk["priority"] == 1 and milk["due"] == {"date": tomorrow}, milk
+        assert (
+            milk and milk["project_id"] == home["id"] and milk["priority"] == 1 and milk["due"] == {"date": tomorrow}
+        ), milk
         step("todo.add_item with quick-add syntax: 'milk', Home, p1, due tomorrow")
 
         response = await ha.rest(
-            "POST", "/api/services/opentodo/add_task?return_response",
+            "POST",
+            "/api/services/opentodo/add_task?return_response",
             {"text": "Descale the kettle @kitchen", "project": "Home", "priority": 2},
         )
         added = response["service_response"]["task"]
         assert added["title"] == "Descale the kettle" and added["labels"] == ["kitchen"], added
         step("opentodo.add_task returned the created task")
 
-        speech = await ha.rest("POST", "/api/conversation/process", {"text": "add bread to the Home list", "language": "en"})
+        speech = await ha.rest(
+            "POST", "/api/conversation/process", {"text": "add bread to the Home list", "language": "en"}
+        )
         assert speech["response"]["response_type"] == "action_done", speech
         assert await ot.task("Bread"), "Assist did not add Bread"
-        speech = await ha.rest("POST", "/api/conversation/process", {"text": "check off bread from the Home list", "language": "en"})
+        speech = await ha.rest(
+            "POST", "/api/conversation/process", {"text": "check off bread from the Home list", "language": "en"}
+        )
         assert speech["response"]["response_type"] == "action_done", speech
         assert (await ot.task("Bread"))["completed_at"]
         step("Assist: 'add bread to the Home list' and 'check off bread from the Home list'")

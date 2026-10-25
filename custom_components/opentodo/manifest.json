@@ -1,10 +1,13 @@
 {
   "domain": "opentodo",
   "name": "OpenTodo",
-  "categories": ["productivity_information.calendars_todos"],
-  "codeowners": ["@pixari"],
+  "codeowners": [
+    "@pixari"
+  ],
   "config_flow": true,
-  "dependencies": ["webhook"],
+  "dependencies": [
+    "webhook"
+  ],
   "documentation": "https://github.com/pixari/opentodo-homeassistant",
   "integration_type": "service",
   "iot_class": "local_push",

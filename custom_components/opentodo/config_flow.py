@@ -122,7 +122,11 @@ def _user_schema(defaults: Mapping[str, Any]) -> vol.Schema:
     )
 
 
-PLACEHOLDERS = {"docs_url": DOCS_URL}
+PLACEHOLDERS = {
+    "docs_url": DOCS_URL,
+    "url_example": "http://192.168.1.20:8080, https://todo.example.com",
+    "ha_url_example": "http://192.168.1.10:8123",
+}
 
 
 class OpenTodoConfigFlow(ConfigFlow, domain=DOMAIN):

@@ -10,7 +10,7 @@
           "verify_ssl": "TLS-Zertifikat prüfen"
         },
         "data_description": {
-          "url": "Die Adresse, unter der du OpenTodo öffnest, zum Beispiel http://192.168.1.20:8080 oder https://todo.example.com.",
+          "url": "Die Adresse, unter der du OpenTodo öffnest, zum Beispiel {url_example}.",
           "token": "Beginnt mit ot_. Es wird nur einmal angezeigt, beim Erstellen.",
           "verify_ssl": "Nur für einen Server mit selbst signiertem Zertifikat ausschalten."
         }
@@ -77,7 +77,7 @@
           "quick_add": "\"Milch morgen #Zuhause p1\" wird zur Aufgabe \"Milch\", morgen fällig, in Zuhause, Priorität 1.",
           "scan_interval": "Solange sofortige Aktualisierungen funktionieren, prüft Home Assistant trotzdem mindestens alle 15 Minuten.",
           "push": "OpenTodo ruft Home Assistant auf, wenn sich etwas ändert (ein Webhook). Braucht ein Token mit Vollzugriff.",
-          "ha_url": "Nur wenn OpenTodo Home Assistant unter der üblichen Adresse nicht erreicht, zum Beispiel http://192.168.1.10:8123."
+          "ha_url": "Nur wenn OpenTodo Home Assistant unter der üblichen Adresse nicht erreicht, zum Beispiel {ha_url_example}."
         }
       }
     }
