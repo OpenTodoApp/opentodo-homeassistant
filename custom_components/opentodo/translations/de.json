@@ -1,0 +1,202 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "OpenTodo verbinden",
+        "description": "Gib die Adresse deines OpenTodo-Servers und ein API-Token ein. Erstelle das Token in OpenTodo unter Einstellungen → Integrationen → API-Tokens: Wähle **Neues Token**, gib ihm einen Namen wie \"Home Assistant\" und den Zugriff **Vollzugriff**. Ein Token **Nur lesen** geht auch: Dann bekommst du die Zähler und den Kalender, aber die Listen lassen sich nicht ändern und Änderungen kommen nicht sofort an. [So funktioniert es]({docs_url})",
+        "data": {
+          "url": "Serveradresse",
+          "token": "API-Token",
+          "verify_ssl": "TLS-Zertifikat prüfen"
+        },
+        "data_description": {
+          "url": "Die Adresse, unter der du OpenTodo öffnest, zum Beispiel http://192.168.1.20:8080 oder https://todo.example.com.",
+          "token": "Beginnt mit ot_. Es wird nur einmal angezeigt, beim Erstellen.",
+          "verify_ssl": "Nur für einen Server mit selbst signiertem Zertifikat ausschalten."
+        }
+      },
+      "reauth_confirm": {
+        "title": "Neues Token für {title}",
+        "description": "OpenTodo unter {url} akzeptiert das Token nicht mehr. Erstelle unter Einstellungen → Integrationen → API-Tokens ein neues (Zugriff **Vollzugriff**) und füge es hier ein.",
+        "data": {
+          "token": "API-Token"
+        },
+        "data_description": {
+          "token": "Beginnt mit ot_. Es muss zum selben Konto gehören."
+        }
+      },
+      "reconfigure": {
+        "title": "OpenTodo-Verbindung ändern",
+        "description": "Ändere die Serveradresse oder das Token. Beide müssen weiter zum selben Konto führen.",
+        "data": {
+          "url": "Serveradresse",
+          "token": "API-Token",
+          "verify_ssl": "TLS-Zertifikat prüfen"
+        },
+        "data_description": {
+          "url": "Die Adresse, unter der du OpenTodo öffnest.",
+          "token": "Beginnt mit ot_.",
+          "verify_ssl": "Nur für einen Server mit selbst signiertem Zertifikat ausschalten."
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Der Server ist nicht erreichbar. Prüfe die Adresse und ob OpenTodo läuft.",
+      "not_opentodo": "Unter dieser Adresse antwortet etwas, aber kein OpenTodo-Server.",
+      "invalid_auth": "OpenTodo akzeptiert dieses Token nicht. Prüfe, ob du es vollständig kopiert hast und ob es widerrufen wurde.",
+      "agent_token": "Das ist ein Token für KI-Assistenten (agent). Es kann nur wenige Arten von Änderungen machen und speichert sie als Änderungen eines Assistenten. Erstelle stattdessen ein Token mit dem Zugriff Vollzugriff (oder Nur lesen).",
+      "admin_token": "Das ist ein Admin-Token. So viel Zugriff braucht Home Assistant nicht; erstelle stattdessen ein Token mit dem Zugriff Vollzugriff.",
+      "encrypted_account": "Dieses Konto nutzt Ende-zu-Ende-Verschlüsselung. Der Server kann die Titel der Aufgaben nicht lesen, also kann Home Assistant sie nicht zeigen. Nutze ein Konto ohne Verschlüsselung.",
+      "unknown": "Etwas ist schiefgegangen. Die Details stehen im Protokoll von Home Assistant."
+    },
+    "abort": {
+      "already_configured": "Dieses OpenTodo-Konto ist schon eingerichtet.",
+      "wrong_account": "Das Token gehört zu einem anderen OpenTodo-Konto. Nutze ein Token des hier eingerichteten Kontos."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "OpenTodo-Optionen",
+        "description": "Wähle, welche Listen Home Assistant zeigt und wie Änderungen ankommen. [Mehr zu jeder Option]({docs_url})",
+        "data": {
+          "all_projects": "Alle Projekte zeigen",
+          "projects": "Projekte",
+          "today_list": "Eine Liste Heute zeigen",
+          "completed_days": "Erledigte Aufgaben sichtbar lassen (Tage)",
+          "quick_add": "Schnelleingabe in neuen Einträgen lesen",
+          "scan_interval": "Auf Änderungen prüfen alle (Minuten)",
+          "push": "Sofortige Aktualisierungen",
+          "ha_url": "Adresse von Home Assistant für OpenTodo"
+        },
+        "data_description": {
+          "all_projects": "Jedes Projekt bekommt eine To-do-Liste und einen Zähler, auch neue Projekte. Ausschalten, um unten Projekte zu wählen.",
+          "projects": "Gilt, wenn \"Alle Projekte zeigen\" aus ist.",
+          "today_list": "Eine Liste mit dem, was die App unter Heute zeigt: heute oder früher fällig, eine erreichte Frist oder ein gekommenes Startdatum.",
+          "completed_days": "0 blendet erledigte Aufgaben aus.",
+          "quick_add": "\"Milch morgen #Zuhause p1\" wird zur Aufgabe \"Milch\", morgen fällig, in Zuhause, Priorität 1.",
+          "scan_interval": "Solange sofortige Aktualisierungen funktionieren, prüft Home Assistant trotzdem mindestens alle 15 Minuten.",
+          "push": "OpenTodo ruft Home Assistant auf, wenn sich etwas ändert (ein Webhook). Braucht ein Token mit Vollzugriff.",
+          "ha_url": "Nur wenn OpenTodo Home Assistant unter der üblichen Adresse nicht erreicht, zum Beispiel http://192.168.1.10:8123."
+        }
+      }
+    }
+  },
+  "entity": {
+    "todo": {
+      "inbox": {
+        "name": "Eingang"
+      },
+      "today": {
+        "name": "Heute"
+      }
+    },
+    "sensor": {
+      "today": {
+        "name": "Heute",
+        "unit_of_measurement": "Aufgaben"
+      },
+      "earlier": {
+        "name": "Von früher",
+        "unit_of_measurement": "Aufgaben"
+      },
+      "inbox": {
+        "name": "Eingang",
+        "unit_of_measurement": "Aufgaben"
+      },
+      "project": {
+        "name": "{project}",
+        "unit_of_measurement": "Aufgaben"
+      }
+    },
+    "calendar": {
+      "tasks": {
+        "name": "Aufgaben"
+      }
+    }
+  },
+  "issues": {
+    "push_private_network": {
+      "title": "OpenTodo kann Home Assistant in deinem Netz nicht aufrufen",
+      "description": "{title} prüft OpenTodo alle paar Minuten, statt Änderungen sofort zu bekommen, weil OpenTodo Webhooks an Adressen im privaten Netz ablehnt.\n\nDer Eigentümer des OpenTodo-Servers unter {server} kann sie erlauben: In OpenTodo Einstellungen → Integrationen → Webhooks öffnen und **Ziele im privaten Netz erlauben** einschalten. Home Assistant versucht es innerhalb einer Stunde erneut, oder sofort, wenn du die Integration neu lädst.\n\nOpenTodo meldete: {message}"
+    },
+    "push_failed": {
+      "title": "Sofortige Aktualisierungen von OpenTodo sind aus",
+      "description": "{title} prüft OpenTodo alle paar Minuten, weil der Webhook für sofortige Aktualisierungen nicht eingerichtet werden konnte.\n\nOpenTodo meldete: {message}\n\nWenn OpenTodo Home Assistant unter der üblichen Adresse nicht erreicht, trage die Adresse in den Optionen der Integration ein. Home Assistant versucht es innerhalb einer Stunde erneut."
+    },
+    "encrypted_account": {
+      "title": "Das OpenTodo-Konto nutzt Ende-zu-Ende-Verschlüsselung",
+      "description": "{title} aktualisiert sich nicht mehr: Das Konto nutzt jetzt Ende-zu-Ende-Verschlüsselung, der Server kann die Titel der Aufgaben nicht lesen und Home Assistant sie nicht zeigen. Entferne die Integration, oder schalte die Verschlüsselung für das Konto in OpenTodo aus und lade sie neu."
+    }
+  },
+  "exceptions": {
+    "read_only": {
+      "message": "Dieses OpenTodo-Token kann nur lesen. Richte die Integration mit einem Token mit Vollzugriff ein, um Änderungen zu machen."
+    },
+    "auth_failed": {
+      "message": "OpenTodo akzeptiert das Token nicht mehr. Gib ein neues ein, wo Home Assistant danach fragt."
+    },
+    "cannot_connect": {
+      "message": "OpenTodo ist nicht erreichbar: {error}"
+    },
+    "api_error": {
+      "message": "OpenTodo hat die Änderung abgelehnt: {message} ({code})"
+    },
+    "task_not_found": {
+      "message": "Diese Aufgabe gibt es in OpenTodo nicht mehr."
+    },
+    "entry_not_found": {
+      "message": "Kein OpenTodo-Konto ist eingerichtet und geladen."
+    },
+    "entry_required": {
+      "message": "Mehr als ein OpenTodo-Konto ist eingerichtet: Wähle eines."
+    },
+    "project_not_found": {
+      "message": "Es gibt kein Projekt namens {project}."
+    }
+  },
+  "services": {
+    "add_task": {
+      "name": "Aufgabe hinzufügen",
+      "description": "Fügt OpenTodo eine Aufgabe hinzu. Der Text darf die Schnelleingabe nutzen, etwa \"Milch morgen #Zuhause p1 @Besorgungen\". Gibt die neue Aufgabe zurück.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Konto",
+          "description": "Das OpenTodo-Konto, wenn mehr als eines eingerichtet ist."
+        },
+        "text": {
+          "name": "Text",
+          "description": "Der Titel der Aufgabe, gern mit Schnelleingabe."
+        },
+        "project": {
+          "name": "Projekt",
+          "description": "Name oder ID eines Projekts. Gilt vor einem #Projekt im Text. Ohne Projekt und ohne #Projekt landet die Aufgabe im Eingang."
+        },
+        "due_date": {
+          "name": "Fälligkeitsdatum",
+          "description": "Der Tag, an dem sie erledigt werden soll. Gilt vor einem Datum im Text."
+        },
+        "due_datetime": {
+          "name": "Fälligkeitsdatum und -zeit",
+          "description": "Tag und Uhrzeit, zu der sie erledigt werden soll. Gilt vor einem Datum im Text."
+        },
+        "priority": {
+          "name": "Priorität",
+          "description": "1 ist die höchste, 4 die Standardpriorität."
+        },
+        "labels": {
+          "name": "Labels",
+          "description": "Label-Namen, zusätzlich zu denen im Text. Fehlende Labels werden angelegt."
+        },
+        "description": {
+          "name": "Notizen",
+          "description": "Die Notizen der Aufgabe (Markdown)."
+        },
+        "quick_add": {
+          "name": "Schnelleingabe lesen",
+          "description": "Ausschalten, um den Text unverändert als Titel zu nehmen."
+        }
+      }
+    }
+  }
+}

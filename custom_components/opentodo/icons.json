@@ -1,0 +1,20 @@
+{
+  "entity": {
+    "todo": {
+      "inbox": { "default": "mdi:inbox" },
+      "today": { "default": "mdi:calendar-today" }
+    },
+    "sensor": {
+      "today": { "default": "mdi:calendar-today" },
+      "earlier": { "default": "mdi:calendar-alert" },
+      "inbox": { "default": "mdi:inbox" },
+      "project": { "default": "mdi:format-list-checks" }
+    },
+    "calendar": {
+      "tasks": { "default": "mdi:calendar-check" }
+    }
+  },
+  "services": {
+    "add_task": { "service": "mdi:checkbox-marked-circle-plus-outline" }
+  }
+}

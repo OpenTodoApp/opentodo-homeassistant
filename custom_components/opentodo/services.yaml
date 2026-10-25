@@ -1,0 +1,40 @@
+add_task:
+  fields:
+    config_entry_id:
+      selector:
+        config_entry:
+          integration: opentodo
+    text:
+      required: true
+      example: "milk tomorrow #Home p1"
+      selector:
+        text:
+    project:
+      example: "Home"
+      selector:
+        text:
+    due_date:
+      selector:
+        date:
+    due_datetime:
+      selector:
+        datetime:
+    priority:
+      selector:
+        number:
+          min: 1
+          max: 4
+          mode: box
+    labels:
+      example: "errands"
+      selector:
+        text:
+          multiple: true
+    description:
+      selector:
+        text:
+          multiline: true
+    quick_add:
+      default: true
+      selector:
+        boolean:

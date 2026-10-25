@@ -1,0 +1,202 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Conectar o OpenTodo",
+        "description": "Informe o endereço do seu servidor OpenTodo e um token de API. Crie o token no OpenTodo em Configurações → Integrações → Tokens de API: escolha **Novo token**, dê a ele um nome como \"Home Assistant\" e o acesso **Acesso total**. Um token **Somente leitura** também funciona: você recebe as contagens e o calendário, mas as listas não podem ser alteradas e as mudanças não chegam na hora. [Como funciona]({docs_url})",
+        "data": {
+          "url": "Endereço do servidor",
+          "token": "Token de API",
+          "verify_ssl": "Verificar o certificado TLS"
+        },
+        "data_description": {
+          "url": "O endereço em que você abre o OpenTodo, por exemplo http://192.168.1.20:8080 ou https://todo.example.com.",
+          "token": "Começa com ot_. É mostrado uma única vez, ao ser criado.",
+          "verify_ssl": "Desative só para um servidor com certificado autoassinado."
+        }
+      },
+      "reauth_confirm": {
+        "title": "Novo token para {title}",
+        "description": "O OpenTodo em {url} não aceita mais o token. Crie um novo em Configurações → Integrações → Tokens de API (acesso **Acesso total**) e cole aqui.",
+        "data": {
+          "token": "Token de API"
+        },
+        "data_description": {
+          "token": "Começa com ot_. Precisa ser da mesma conta."
+        }
+      },
+      "reconfigure": {
+        "title": "Alterar a conexão com o OpenTodo",
+        "description": "Altere o endereço do servidor ou o token. Eles precisam continuar levando à mesma conta.",
+        "data": {
+          "url": "Endereço do servidor",
+          "token": "Token de API",
+          "verify_ssl": "Verificar o certificado TLS"
+        },
+        "data_description": {
+          "url": "O endereço em que você abre o OpenTodo.",
+          "token": "Começa com ot_.",
+          "verify_ssl": "Desative só para um servidor com certificado autoassinado."
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Não foi possível acessar o servidor. Verifique o endereço e se o OpenTodo está rodando.",
+      "not_opentodo": "Algo responde neste endereço, mas não é um servidor OpenTodo.",
+      "invalid_auth": "O OpenTodo não aceita este token. Verifique se você o copiou inteiro e se ele não foi revogado.",
+      "agent_token": "Este é um token de assistente de IA (agent). Ele só pode fazer alguns tipos de alteração e as registra como feitas por um assistente. Crie em vez disso um token com o acesso Acesso total (ou Somente leitura).",
+      "admin_token": "Este é um token Admin. O Home Assistant não precisa de tanto acesso; crie em vez disso um token com o acesso Acesso total.",
+      "encrypted_account": "Esta conta usa criptografia de ponta a ponta. O servidor não consegue ler os títulos das tarefas, então o Home Assistant não pode mostrá-los. Use uma conta sem criptografia.",
+      "unknown": "Algo deu errado. O registro do Home Assistant tem os detalhes."
+    },
+    "abort": {
+      "already_configured": "Esta conta do OpenTodo já está configurada.",
+      "wrong_account": "O token é de outra conta do OpenTodo. Use um token da conta configurada aqui."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Opções do OpenTodo",
+        "description": "Escolha as listas que o Home Assistant mostra e como as mudanças chegam. [Mais sobre cada opção]({docs_url})",
+        "data": {
+          "all_projects": "Mostrar todos os projetos",
+          "projects": "Projetos",
+          "today_list": "Mostrar uma lista Hoje",
+          "completed_days": "Manter tarefas concluídas visíveis (dias)",
+          "quick_add": "Ler a sintaxe de adição rápida nos itens novos",
+          "scan_interval": "Procurar mudanças a cada (minutos)",
+          "push": "Atualizações na hora",
+          "ha_url": "Endereço do Home Assistant para o OpenTodo"
+        },
+        "data_description": {
+          "all_projects": "Cada projeto ganha uma lista de tarefas e uma contagem, inclusive projetos novos. Desative para escolher os projetos abaixo.",
+          "projects": "Usado quando \"Mostrar todos os projetos\" está desativado.",
+          "today_list": "Uma lista com o que o app mostra em Hoje: para hoje ou antes, um prazo atingido ou uma data de início que chegou.",
+          "completed_days": "0 esconde as tarefas concluídas.",
+          "quick_add": "\"leite amanhã #Casa p1\" vira a tarefa \"leite\", para amanhã, em Casa, prioridade 1.",
+          "scan_interval": "Enquanto as atualizações na hora funcionam, o Home Assistant ainda verifica pelo menos a cada 15 minutos.",
+          "push": "O OpenTodo chama o Home Assistant quando algo muda (um webhook). Precisa de um token com Acesso total.",
+          "ha_url": "Só se o OpenTodo não alcançar o Home Assistant no endereço de costume, por exemplo http://192.168.1.10:8123."
+        }
+      }
+    }
+  },
+  "entity": {
+    "todo": {
+      "inbox": {
+        "name": "Caixa de entrada"
+      },
+      "today": {
+        "name": "Hoje"
+      }
+    },
+    "sensor": {
+      "today": {
+        "name": "Hoje",
+        "unit_of_measurement": "tarefas"
+      },
+      "earlier": {
+        "name": "De antes",
+        "unit_of_measurement": "tarefas"
+      },
+      "inbox": {
+        "name": "Caixa de entrada",
+        "unit_of_measurement": "tarefas"
+      },
+      "project": {
+        "name": "{project}",
+        "unit_of_measurement": "tarefas"
+      }
+    },
+    "calendar": {
+      "tasks": {
+        "name": "Tarefas"
+      }
+    }
+  },
+  "issues": {
+    "push_private_network": {
+      "title": "O OpenTodo não consegue chamar o Home Assistant na sua rede",
+      "description": "{title} consulta o OpenTodo a cada poucos minutos em vez de receber as mudanças na hora, porque o OpenTodo recusa webhooks para endereços de rede privada.\n\nO dono do servidor OpenTodo em {server} pode permitir: no OpenTodo, abra Configurações → Integrações → Webhooks e ative **Permitir destinos em rede privada**. O Home Assistant tenta de novo em até uma hora, ou na hora quando você recarrega a integração.\n\nO OpenTodo respondeu: {message}"
+    },
+    "push_failed": {
+      "title": "As atualizações na hora do OpenTodo estão desativadas",
+      "description": "{title} consulta o OpenTodo a cada poucos minutos, porque não foi possível configurar o webhook das atualizações na hora.\n\nO OpenTodo respondeu: {message}\n\nSe o OpenTodo não alcança o Home Assistant no endereço de costume, informe o endereço nas opções da integração. O Home Assistant tenta de novo em até uma hora."
+    },
+    "encrypted_account": {
+      "title": "A conta do OpenTodo usa criptografia de ponta a ponta",
+      "description": "{title} parou de atualizar: a conta agora usa criptografia de ponta a ponta, então o servidor não consegue ler os títulos das tarefas e o Home Assistant não pode mostrá-los. Remova a integração, ou desative a criptografia da conta no OpenTodo e recarregue-a."
+    }
+  },
+  "exceptions": {
+    "read_only": {
+      "message": "Este token do OpenTodo é somente leitura. Configure a integração com um token com Acesso total para fazer alterações."
+    },
+    "auth_failed": {
+      "message": "O OpenTodo não aceita mais o token. Informe um novo onde o Home Assistant pedir."
+    },
+    "cannot_connect": {
+      "message": "Não foi possível acessar o OpenTodo: {error}"
+    },
+    "api_error": {
+      "message": "O OpenTodo recusou a alteração: {message} ({code})"
+    },
+    "task_not_found": {
+      "message": "Esta tarefa não está mais no OpenTodo."
+    },
+    "entry_not_found": {
+      "message": "Nenhuma conta do OpenTodo está configurada e carregada."
+    },
+    "entry_required": {
+      "message": "Há mais de uma conta do OpenTodo configurada: escolha uma."
+    },
+    "project_not_found": {
+      "message": "Não há nenhum projeto chamado {project}."
+    }
+  },
+  "services": {
+    "add_task": {
+      "name": "Adicionar tarefa",
+      "description": "Adiciona uma tarefa ao OpenTodo. O texto pode usar a sintaxe de adição rápida, como \"leite amanhã #Casa p1 @recados\". Retorna a tarefa nova.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Conta",
+          "description": "A conta do OpenTodo, quando há mais de uma configurada."
+        },
+        "text": {
+          "name": "Texto",
+          "description": "O título da tarefa, com a sintaxe de adição rápida se quiser."
+        },
+        "project": {
+          "name": "Projeto",
+          "description": "O nome ou id de um projeto. Vale mais que um #projeto no texto. Sem projeto e sem #projeto, a tarefa vai para a Caixa de entrada."
+        },
+        "due_date": {
+          "name": "Data",
+          "description": "O dia para fazer. Vale mais que uma data no texto."
+        },
+        "due_datetime": {
+          "name": "Data e hora",
+          "description": "O dia e a hora para fazer. Vale mais que uma data no texto."
+        },
+        "priority": {
+          "name": "Prioridade",
+          "description": "1 é a mais alta, 4 a padrão."
+        },
+        "labels": {
+          "name": "Etiquetas",
+          "description": "Nomes de etiquetas, somados aos do texto. Etiquetas que faltam são criadas."
+        },
+        "description": {
+          "name": "Notas",
+          "description": "As notas da tarefa (Markdown)."
+        },
+        "quick_add": {
+          "name": "Ler a sintaxe de adição rápida",
+          "description": "Desative para usar o texto como está como título."
+        }
+      }
+    }
+  }
+}

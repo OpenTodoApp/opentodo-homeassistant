@@ -1,0 +1,202 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect OpenTodo",
+        "description": "Enter your OpenTodo server's address and an API token. Create the token in OpenTodo under Settings → Integrations → API tokens: choose **New token**, give it a name such as \"Home Assistant\" and the access **Full access**. A **Read only** token also works: you then get the counts and the calendar, but the lists cannot be changed and changes are not pushed. [How it works]({docs_url})",
+        "data": {
+          "url": "Server address",
+          "token": "API token",
+          "verify_ssl": "Verify the TLS certificate"
+        },
+        "data_description": {
+          "url": "The address you open OpenTodo at, for example http://192.168.1.20:8080 or https://todo.example.com.",
+          "token": "Starts with ot_. It is shown once, when you create it.",
+          "verify_ssl": "Turn off only for a server with a self-signed certificate."
+        }
+      },
+      "reauth_confirm": {
+        "title": "New token for {title}",
+        "description": "OpenTodo at {url} no longer accepts the token. Create a new one under Settings → Integrations → API tokens (access **Full access**) and paste it here.",
+        "data": {
+          "token": "API token"
+        },
+        "data_description": {
+          "token": "Starts with ot_. It must belong to the same account."
+        }
+      },
+      "reconfigure": {
+        "title": "Change the OpenTodo connection",
+        "description": "Change the server address or the token. They must still lead to the same account.",
+        "data": {
+          "url": "Server address",
+          "token": "API token",
+          "verify_ssl": "Verify the TLS certificate"
+        },
+        "data_description": {
+          "url": "The address you open OpenTodo at.",
+          "token": "Starts with ot_.",
+          "verify_ssl": "Turn off only for a server with a self-signed certificate."
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "The server cannot be reached. Check the address and that OpenTodo is running.",
+      "not_opentodo": "Something answers at this address, but it is not an OpenTodo server.",
+      "invalid_auth": "OpenTodo does not accept this token. Check that you copied all of it and that it was not revoked.",
+      "agent_token": "This is an AI assistant (agent) token. It can only make a few kinds of changes and records them as an assistant's. Create a token with the access Full access (or Read only) instead.",
+      "admin_token": "This is an Admin token. Home Assistant does not need that much access; create a token with the access Full access instead.",
+      "encrypted_account": "This account uses end-to-end encryption. The server cannot read task titles, so Home Assistant cannot show them. Use an account without encryption.",
+      "unknown": "Something went wrong. The Home Assistant log has the details."
+    },
+    "abort": {
+      "already_configured": "This OpenTodo account is already set up.",
+      "wrong_account": "The token belongs to another OpenTodo account. Use a token of the account set up here."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "OpenTodo options",
+        "description": "Choose the lists Home Assistant shows and how changes arrive. [More about each option]({docs_url})",
+        "data": {
+          "all_projects": "Show every project",
+          "projects": "Projects",
+          "today_list": "Show a Today list",
+          "completed_days": "Keep completed tasks visible (days)",
+          "quick_add": "Read quick-add syntax in new items",
+          "scan_interval": "Check for changes every (minutes)",
+          "push": "Instant updates",
+          "ha_url": "Home Assistant address for OpenTodo"
+        },
+        "data_description": {
+          "all_projects": "Each project gets a to-do list and a count, new projects included. Turn off to pick projects below.",
+          "projects": "Used when \"Show every project\" is off.",
+          "today_list": "A list with what the app shows in Today: due today or earlier, a deadline reached, or a start date come.",
+          "completed_days": "0 hides completed tasks.",
+          "quick_add": "\"milk tomorrow #Home p1\" becomes the task \"milk\", due tomorrow, in Home, priority 1.",
+          "scan_interval": "While instant updates work, Home Assistant still checks every 15 minutes at least.",
+          "push": "OpenTodo calls Home Assistant when something changes (a webhook). Needs a token with Full access.",
+          "ha_url": "Only if OpenTodo cannot reach Home Assistant at its usual address, for example http://192.168.1.10:8123."
+        }
+      }
+    }
+  },
+  "entity": {
+    "todo": {
+      "inbox": {
+        "name": "Inbox"
+      },
+      "today": {
+        "name": "Today"
+      }
+    },
+    "sensor": {
+      "today": {
+        "name": "Today",
+        "unit_of_measurement": "tasks"
+      },
+      "earlier": {
+        "name": "Earlier",
+        "unit_of_measurement": "tasks"
+      },
+      "inbox": {
+        "name": "Inbox",
+        "unit_of_measurement": "tasks"
+      },
+      "project": {
+        "name": "{project}",
+        "unit_of_measurement": "tasks"
+      }
+    },
+    "calendar": {
+      "tasks": {
+        "name": "Tasks"
+      }
+    }
+  },
+  "issues": {
+    "push_private_network": {
+      "title": "OpenTodo cannot call Home Assistant on your network",
+      "description": "{title} checks OpenTodo for changes every few minutes instead of getting them at once, because OpenTodo refuses webhooks to private network addresses.\n\nThe owner of the OpenTodo server at {server} can allow them: in OpenTodo, open Settings → Integrations → Webhooks and turn on **Allow private network targets**. Home Assistant tries again within an hour, or at once when you reload the integration.\n\nOpenTodo said: {message}"
+    },
+    "push_failed": {
+      "title": "Instant updates from OpenTodo are off",
+      "description": "{title} checks OpenTodo for changes every few minutes, because the webhook for instant updates could not be set up.\n\nOpenTodo said: {message}\n\nIf OpenTodo cannot reach Home Assistant at its usual address, set the address in the integration's options. Home Assistant tries again within an hour."
+    },
+    "encrypted_account": {
+      "title": "The OpenTodo account uses end-to-end encryption",
+      "description": "{title} stopped updating: the account now uses end-to-end encryption, so the server cannot read task titles and Home Assistant cannot show them. Remove the integration, or turn encryption off for the account in OpenTodo and reload it."
+    }
+  },
+  "exceptions": {
+    "read_only": {
+      "message": "This OpenTodo token is read only. Set up the integration with a token that has Full access to make changes."
+    },
+    "auth_failed": {
+      "message": "OpenTodo no longer accepts the token. Enter a new one where Home Assistant asks for it."
+    },
+    "cannot_connect": {
+      "message": "OpenTodo cannot be reached: {error}"
+    },
+    "api_error": {
+      "message": "OpenTodo refused the change: {message} ({code})"
+    },
+    "task_not_found": {
+      "message": "This task is no longer in OpenTodo."
+    },
+    "entry_not_found": {
+      "message": "No OpenTodo account is set up and loaded."
+    },
+    "entry_required": {
+      "message": "More than one OpenTodo account is set up: choose one."
+    },
+    "project_not_found": {
+      "message": "There is no project called {project}."
+    }
+  },
+  "services": {
+    "add_task": {
+      "name": "Add task",
+      "description": "Adds a task to OpenTodo. The text may use quick-add syntax, such as \"milk tomorrow #Home p1 @errands\". Returns the new task.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Account",
+          "description": "The OpenTodo account, when more than one is set up."
+        },
+        "text": {
+          "name": "Text",
+          "description": "The task's title, with quick-add syntax if you like."
+        },
+        "project": {
+          "name": "Project",
+          "description": "A project's name or id. Wins over a #project in the text. Without one and without a #project, the task goes to the Inbox."
+        },
+        "due_date": {
+          "name": "Due date",
+          "description": "The day to do it. Wins over a date in the text."
+        },
+        "due_datetime": {
+          "name": "Due date and time",
+          "description": "The day and time to do it. Wins over a date in the text."
+        },
+        "priority": {
+          "name": "Priority",
+          "description": "1 is the highest, 4 the default."
+        },
+        "labels": {
+          "name": "Labels",
+          "description": "Label names, added to those in the text. Missing labels are created."
+        },
+        "description": {
+          "name": "Notes",
+          "description": "The task's notes (Markdown)."
+        },
+        "quick_add": {
+          "name": "Read quick-add syntax",
+          "description": "Turn off to keep the text exactly as the title."
+        }
+      }
+    }
+  }
+}

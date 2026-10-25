@@ -1,0 +1,202 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connecter OpenTodo",
+        "description": "Saisissez l'adresse de votre serveur OpenTodo et un jeton d'API. Créez le jeton dans OpenTodo sous Réglages → Intégrations → Jetons d'API : choisissez **Nouveau jeton**, donnez-lui un nom comme « Home Assistant » et l'accès **Accès complet**. Un jeton **Lecture seule** fonctionne aussi : vous avez alors les compteurs et le calendrier, mais les listes ne peuvent pas être modifiées et les changements n'arrivent pas tout de suite. [Comment ça marche]({docs_url})",
+        "data": {
+          "url": "Adresse du serveur",
+          "token": "Jeton d'API",
+          "verify_ssl": "Vérifier le certificat TLS"
+        },
+        "data_description": {
+          "url": "L'adresse à laquelle vous ouvrez OpenTodo, par exemple http://192.168.1.20:8080 ou https://todo.example.com.",
+          "token": "Commence par ot_. Il n'est affiché qu'une fois, à sa création.",
+          "verify_ssl": "À désactiver uniquement pour un serveur avec un certificat auto-signé."
+        }
+      },
+      "reauth_confirm": {
+        "title": "Nouveau jeton pour {title}",
+        "description": "OpenTodo sur {url} n'accepte plus le jeton. Créez-en un nouveau sous Réglages → Intégrations → Jetons d'API (accès **Accès complet**) et collez-le ici.",
+        "data": {
+          "token": "Jeton d'API"
+        },
+        "data_description": {
+          "token": "Commence par ot_. Il doit appartenir au même compte."
+        }
+      },
+      "reconfigure": {
+        "title": "Modifier la connexion à OpenTodo",
+        "description": "Modifiez l'adresse du serveur ou le jeton. Ils doivent toujours mener au même compte.",
+        "data": {
+          "url": "Adresse du serveur",
+          "token": "Jeton d'API",
+          "verify_ssl": "Vérifier le certificat TLS"
+        },
+        "data_description": {
+          "url": "L'adresse à laquelle vous ouvrez OpenTodo.",
+          "token": "Commence par ot_.",
+          "verify_ssl": "À désactiver uniquement pour un serveur avec un certificat auto-signé."
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Le serveur est injoignable. Vérifiez l'adresse et qu'OpenTodo fonctionne.",
+      "not_opentodo": "Quelque chose répond à cette adresse, mais ce n'est pas un serveur OpenTodo.",
+      "invalid_auth": "OpenTodo n'accepte pas ce jeton. Vérifiez que vous l'avez copié en entier et qu'il n'a pas été révoqué.",
+      "agent_token": "C'est un jeton d'assistant IA (agent). Il ne peut faire que quelques types de modifications et les enregistre comme faites par un assistant. Créez plutôt un jeton avec l'accès Accès complet (ou Lecture seule).",
+      "admin_token": "C'est un jeton Admin. Home Assistant n'a pas besoin d'autant d'accès ; créez plutôt un jeton avec l'accès Accès complet.",
+      "encrypted_account": "Ce compte utilise le chiffrement de bout en bout. Le serveur ne peut pas lire les titres des tâches, donc Home Assistant ne peut pas les afficher. Utilisez un compte sans chiffrement.",
+      "unknown": "Une erreur s'est produite. Le journal de Home Assistant contient les détails."
+    },
+    "abort": {
+      "already_configured": "Ce compte OpenTodo est déjà configuré.",
+      "wrong_account": "Le jeton appartient à un autre compte OpenTodo. Utilisez un jeton du compte configuré ici."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Options d'OpenTodo",
+        "description": "Choisissez les listes que Home Assistant affiche et la façon dont les changements arrivent. [En savoir plus sur chaque option]({docs_url})",
+        "data": {
+          "all_projects": "Afficher tous les projets",
+          "projects": "Projets",
+          "today_list": "Afficher une liste Aujourd'hui",
+          "completed_days": "Garder les tâches terminées visibles (jours)",
+          "quick_add": "Lire la syntaxe d'ajout rapide dans les nouveaux éléments",
+          "scan_interval": "Vérifier les changements toutes les (minutes)",
+          "push": "Mises à jour immédiates",
+          "ha_url": "Adresse de Home Assistant pour OpenTodo"
+        },
+        "data_description": {
+          "all_projects": "Chaque projet a une liste de tâches et un compteur, nouveaux projets compris. Désactivez pour choisir les projets ci-dessous.",
+          "projects": "Utilisé quand « Afficher tous les projets » est désactivé.",
+          "today_list": "Une liste avec ce que l'app montre dans Aujourd'hui : à faire aujourd'hui ou avant, une échéance atteinte ou une date de début arrivée.",
+          "completed_days": "0 masque les tâches terminées.",
+          "quick_add": "« lait demain #Maison p1 » devient la tâche « lait », pour demain, dans Maison, priorité 1.",
+          "scan_interval": "Tant que les mises à jour immédiates fonctionnent, Home Assistant vérifie quand même au moins toutes les 15 minutes.",
+          "push": "OpenTodo appelle Home Assistant quand quelque chose change (un webhook). Nécessite un jeton avec Accès complet.",
+          "ha_url": "Seulement si OpenTodo ne joint pas Home Assistant à son adresse habituelle, par exemple http://192.168.1.10:8123."
+        }
+      }
+    }
+  },
+  "entity": {
+    "todo": {
+      "inbox": {
+        "name": "Boîte de réception"
+      },
+      "today": {
+        "name": "Aujourd'hui"
+      }
+    },
+    "sensor": {
+      "today": {
+        "name": "Aujourd'hui",
+        "unit_of_measurement": "tâches"
+      },
+      "earlier": {
+        "name": "Plus tôt",
+        "unit_of_measurement": "tâches"
+      },
+      "inbox": {
+        "name": "Boîte de réception",
+        "unit_of_measurement": "tâches"
+      },
+      "project": {
+        "name": "{project}",
+        "unit_of_measurement": "tâches"
+      }
+    },
+    "calendar": {
+      "tasks": {
+        "name": "Tâches"
+      }
+    }
+  },
+  "issues": {
+    "push_private_network": {
+      "title": "OpenTodo ne peut pas appeler Home Assistant sur votre réseau",
+      "description": "{title} vérifie OpenTodo toutes les quelques minutes au lieu de recevoir les changements tout de suite, car OpenTodo refuse les webhooks vers des adresses du réseau privé.\n\nLe propriétaire du serveur OpenTodo sur {server} peut les autoriser : dans OpenTodo, ouvrez Réglages → Intégrations → Webhooks et activez **Autoriser les cibles du réseau privé**. Home Assistant réessaie dans l'heure, ou tout de suite quand vous rechargez l'intégration.\n\nOpenTodo a répondu : {message}"
+    },
+    "push_failed": {
+      "title": "Les mises à jour immédiates d'OpenTodo sont désactivées",
+      "description": "{title} vérifie OpenTodo toutes les quelques minutes, car le webhook des mises à jour immédiates n'a pas pu être configuré.\n\nOpenTodo a répondu : {message}\n\nSi OpenTodo ne joint pas Home Assistant à son adresse habituelle, indiquez l'adresse dans les options de l'intégration. Home Assistant réessaie dans l'heure."
+    },
+    "encrypted_account": {
+      "title": "Le compte OpenTodo utilise le chiffrement de bout en bout",
+      "description": "{title} ne se met plus à jour : le compte utilise maintenant le chiffrement de bout en bout, le serveur ne peut donc pas lire les titres des tâches et Home Assistant ne peut pas les afficher. Supprimez l'intégration, ou désactivez le chiffrement du compte dans OpenTodo et rechargez-la."
+    }
+  },
+  "exceptions": {
+    "read_only": {
+      "message": "Ce jeton OpenTodo est en lecture seule. Configurez l'intégration avec un jeton en Accès complet pour faire des modifications."
+    },
+    "auth_failed": {
+      "message": "OpenTodo n'accepte plus le jeton. Saisissez-en un nouveau là où Home Assistant le demande."
+    },
+    "cannot_connect": {
+      "message": "OpenTodo est injoignable : {error}"
+    },
+    "api_error": {
+      "message": "OpenTodo a refusé la modification : {message} ({code})"
+    },
+    "task_not_found": {
+      "message": "Cette tâche n'est plus dans OpenTodo."
+    },
+    "entry_not_found": {
+      "message": "Aucun compte OpenTodo n'est configuré et chargé."
+    },
+    "entry_required": {
+      "message": "Plusieurs comptes OpenTodo sont configurés : choisissez-en un."
+    },
+    "project_not_found": {
+      "message": "Il n'y a pas de projet nommé {project}."
+    }
+  },
+  "services": {
+    "add_task": {
+      "name": "Ajouter une tâche",
+      "description": "Ajoute une tâche à OpenTodo. Le texte peut utiliser la syntaxe d'ajout rapide, comme « lait demain #Maison p1 @courses ». Renvoie la nouvelle tâche.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Compte",
+          "description": "Le compte OpenTodo, quand plusieurs sont configurés."
+        },
+        "text": {
+          "name": "Texte",
+          "description": "Le titre de la tâche, avec la syntaxe d'ajout rapide si vous voulez."
+        },
+        "project": {
+          "name": "Projet",
+          "description": "Le nom ou l'identifiant d'un projet. Prime sur un #projet dans le texte. Sans projet ni #projet, la tâche va dans la Boîte de réception."
+        },
+        "due_date": {
+          "name": "Date",
+          "description": "Le jour où la faire. Prime sur une date dans le texte."
+        },
+        "due_datetime": {
+          "name": "Date et heure",
+          "description": "Le jour et l'heure où la faire. Prime sur une date dans le texte."
+        },
+        "priority": {
+          "name": "Priorité",
+          "description": "1 est la plus haute, 4 la priorité par défaut."
+        },
+        "labels": {
+          "name": "Étiquettes",
+          "description": "Des noms d'étiquettes, ajoutés à ceux du texte. Les étiquettes manquantes sont créées."
+        },
+        "description": {
+          "name": "Notes",
+          "description": "Les notes de la tâche (Markdown)."
+        },
+        "quick_add": {
+          "name": "Lire la syntaxe d'ajout rapide",
+          "description": "Désactivez pour garder le texte tel quel comme titre."
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,45 @@
+name: Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: astral-sh/setup-uv@v6
+      - run: uvx ruff@0.14.0 check .
+      - run: uvx ruff@0.14.0 format --check .
+
+  pytest:
+    name: pytest
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: astral-sh/setup-uv@v6
+      - run: uv python install 3.14
+      - run: uv venv -p 3.14 .venv
+      - run: uv pip install -p .venv/bin/python -r requirements_test.txt
+      - run: .venv/bin/python -m pytest tests --cov --cov-report=term-missing
+
+  e2e:
+    name: End-to-end (OpenTodo and Home Assistant containers)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - run: pip install aiohttp
+      - run: python tests_e2e/e2e.py
+        env:
+          E2E_PREFIX: ci-e2e

@@ -1,0 +1,202 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Collega OpenTodo",
+        "description": "Inserisci l'indirizzo del tuo server OpenTodo e un token API. Crea il token in OpenTodo in Impostazioni → Integrazioni → Token API: scegli **Nuovo token**, dagli un nome come \"Home Assistant\" e l'accesso **Accesso completo**. Funziona anche un token **Sola lettura**: avrai i conteggi e il calendario, ma gli elenchi non si possono modificare e le modifiche non arrivano subito. [Come funziona]({docs_url})",
+        "data": {
+          "url": "Indirizzo del server",
+          "token": "Token API",
+          "verify_ssl": "Verifica il certificato TLS"
+        },
+        "data_description": {
+          "url": "L'indirizzo a cui apri OpenTodo, per esempio http://192.168.1.20:8080 o https://todo.example.com.",
+          "token": "Inizia con ot_. Viene mostrato una sola volta, quando lo crei.",
+          "verify_ssl": "Disattiva solo per un server con un certificato autofirmato."
+        }
+      },
+      "reauth_confirm": {
+        "title": "Nuovo token per {title}",
+        "description": "OpenTodo su {url} non accetta più il token. Creane uno nuovo in Impostazioni → Integrazioni → Token API (accesso **Accesso completo**) e incollalo qui.",
+        "data": {
+          "token": "Token API"
+        },
+        "data_description": {
+          "token": "Inizia con ot_. Deve appartenere allo stesso account."
+        }
+      },
+      "reconfigure": {
+        "title": "Modifica il collegamento a OpenTodo",
+        "description": "Modifica l'indirizzo del server o il token. Devono portare sempre allo stesso account.",
+        "data": {
+          "url": "Indirizzo del server",
+          "token": "Token API",
+          "verify_ssl": "Verifica il certificato TLS"
+        },
+        "data_description": {
+          "url": "L'indirizzo a cui apri OpenTodo.",
+          "token": "Inizia con ot_.",
+          "verify_ssl": "Disattiva solo per un server con un certificato autofirmato."
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Il server non è raggiungibile. Controlla l'indirizzo e che OpenTodo sia in esecuzione.",
+      "not_opentodo": "A questo indirizzo risponde qualcosa, ma non è un server OpenTodo.",
+      "invalid_auth": "OpenTodo non accetta questo token. Controlla di averlo copiato per intero e che non sia stato revocato.",
+      "agent_token": "Questo è un token per assistenti IA (agent). Può fare solo alcuni tipi di modifiche e le registra come fatte da un assistente. Crea invece un token con accesso Accesso completo (o Sola lettura).",
+      "admin_token": "Questo è un token Admin. A Home Assistant non serve tanto accesso: crea invece un token con accesso Accesso completo.",
+      "encrypted_account": "Questo account usa la crittografia end-to-end. Il server non può leggere i titoli delle attività, quindi Home Assistant non può mostrarli. Usa un account senza crittografia.",
+      "unknown": "Qualcosa è andato storto. I dettagli sono nel log di Home Assistant."
+    },
+    "abort": {
+      "already_configured": "Questo account OpenTodo è già configurato.",
+      "wrong_account": "Il token appartiene a un altro account OpenTodo. Usa un token dell'account configurato qui."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Opzioni di OpenTodo",
+        "description": "Scegli gli elenchi che Home Assistant mostra e come arrivano le modifiche. [Di più su ogni opzione]({docs_url})",
+        "data": {
+          "all_projects": "Mostra tutti i progetti",
+          "projects": "Progetti",
+          "today_list": "Mostra un elenco Oggi",
+          "completed_days": "Mostra le attività completate per (giorni)",
+          "quick_add": "Leggi la sintassi di aggiunta rapida nelle nuove voci",
+          "scan_interval": "Controlla le modifiche ogni (minuti)",
+          "push": "Aggiornamenti immediati",
+          "ha_url": "Indirizzo di Home Assistant per OpenTodo"
+        },
+        "data_description": {
+          "all_projects": "Ogni progetto ha un elenco di cose da fare e un conteggio, anche i progetti nuovi. Disattiva per scegliere i progetti qui sotto.",
+          "projects": "Usato quando \"Mostra tutti i progetti\" è disattivato.",
+          "today_list": "Un elenco con ciò che l'app mostra in Oggi: in scadenza oggi o prima, una data limite raggiunta o una data di inizio arrivata.",
+          "completed_days": "0 nasconde le attività completate.",
+          "quick_add": "\"latte domani #Casa p1\" diventa l'attività \"latte\", per domani, in Casa, priorità 1.",
+          "scan_interval": "Mentre gli aggiornamenti immediati funzionano, Home Assistant controlla comunque almeno ogni 15 minuti.",
+          "push": "OpenTodo chiama Home Assistant quando qualcosa cambia (un webhook). Serve un token con Accesso completo.",
+          "ha_url": "Solo se OpenTodo non raggiunge Home Assistant al solito indirizzo, per esempio http://192.168.1.10:8123."
+        }
+      }
+    }
+  },
+  "entity": {
+    "todo": {
+      "inbox": {
+        "name": "In arrivo"
+      },
+      "today": {
+        "name": "Oggi"
+      }
+    },
+    "sensor": {
+      "today": {
+        "name": "Oggi",
+        "unit_of_measurement": "attività"
+      },
+      "earlier": {
+        "name": "Da prima",
+        "unit_of_measurement": "attività"
+      },
+      "inbox": {
+        "name": "In arrivo",
+        "unit_of_measurement": "attività"
+      },
+      "project": {
+        "name": "{project}",
+        "unit_of_measurement": "attività"
+      }
+    },
+    "calendar": {
+      "tasks": {
+        "name": "Attività"
+      }
+    }
+  },
+  "issues": {
+    "push_private_network": {
+      "title": "OpenTodo non può chiamare Home Assistant sulla tua rete",
+      "description": "{title} controlla OpenTodo ogni pochi minuti invece di ricevere subito le modifiche, perché OpenTodo rifiuta i webhook verso indirizzi di rete privata.\n\nIl proprietario del server OpenTodo su {server} può consentirli: in OpenTodo apri Impostazioni → Integrazioni → Webhook e attiva **Consenti destinazioni di rete privata**. Home Assistant riprova entro un'ora, o subito quando ricarichi l'integrazione.\n\nOpenTodo ha risposto: {message}"
+    },
+    "push_failed": {
+      "title": "Gli aggiornamenti immediati da OpenTodo sono disattivati",
+      "description": "{title} controlla OpenTodo ogni pochi minuti, perché non è stato possibile configurare il webhook per gli aggiornamenti immediati.\n\nOpenTodo ha risposto: {message}\n\nSe OpenTodo non raggiunge Home Assistant al solito indirizzo, impostalo nelle opzioni dell'integrazione. Home Assistant riprova entro un'ora."
+    },
+    "encrypted_account": {
+      "title": "L'account OpenTodo usa la crittografia end-to-end",
+      "description": "{title} non si aggiorna più: l'account ora usa la crittografia end-to-end, quindi il server non può leggere i titoli delle attività e Home Assistant non può mostrarli. Rimuovi l'integrazione, oppure disattiva la crittografia per l'account in OpenTodo e ricaricala."
+    }
+  },
+  "exceptions": {
+    "read_only": {
+      "message": "Questo token OpenTodo è di sola lettura. Configura l'integrazione con un token con Accesso completo per fare modifiche."
+    },
+    "auth_failed": {
+      "message": "OpenTodo non accetta più il token. Inseriscine uno nuovo dove Home Assistant lo chiede."
+    },
+    "cannot_connect": {
+      "message": "OpenTodo non è raggiungibile: {error}"
+    },
+    "api_error": {
+      "message": "OpenTodo ha rifiutato la modifica: {message} ({code})"
+    },
+    "task_not_found": {
+      "message": "Questa attività non è più in OpenTodo."
+    },
+    "entry_not_found": {
+      "message": "Nessun account OpenTodo è configurato e caricato."
+    },
+    "entry_required": {
+      "message": "Sono configurati più account OpenTodo: scegline uno."
+    },
+    "project_not_found": {
+      "message": "Non c'è nessun progetto chiamato {project}."
+    }
+  },
+  "services": {
+    "add_task": {
+      "name": "Aggiungi attività",
+      "description": "Aggiunge un'attività a OpenTodo. Il testo può usare la sintassi di aggiunta rapida, come \"latte domani #Casa p1 @commissioni\". Restituisce la nuova attività.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Account",
+          "description": "L'account OpenTodo, quando ne sono configurati più di uno."
+        },
+        "text": {
+          "name": "Testo",
+          "description": "Il titolo dell'attività, se vuoi con la sintassi di aggiunta rapida."
+        },
+        "project": {
+          "name": "Progetto",
+          "description": "Il nome o l'id di un progetto. Vale più di un #progetto nel testo. Senza progetto e senza #progetto, l'attività va in In arrivo."
+        },
+        "due_date": {
+          "name": "Data",
+          "description": "Il giorno in cui farla. Vale più di una data nel testo."
+        },
+        "due_datetime": {
+          "name": "Data e ora",
+          "description": "Il giorno e l'ora in cui farla. Vale più di una data nel testo."
+        },
+        "priority": {
+          "name": "Priorità",
+          "description": "1 è la più alta, 4 quella predefinita."
+        },
+        "labels": {
+          "name": "Etichette",
+          "description": "Nomi di etichette, aggiunti a quelli nel testo. Le etichette che mancano vengono create."
+        },
+        "description": {
+          "name": "Note",
+          "description": "Le note dell'attività (Markdown)."
+        },
+        "quick_add": {
+          "name": "Leggi la sintassi di aggiunta rapida",
+          "description": "Disattiva per usare il testo così com'è come titolo."
+        }
+      }
+    }
+  }
+}
