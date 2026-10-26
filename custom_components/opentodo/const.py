@@ -85,4 +85,4 @@ DEFAULT_EVENT_MINUTES: Final = 30
 # Attributes listing tasks are capped at this many entries.
 MAX_ATTRIBUTE_TASKS: Final = 20
 
-DOCS_URL: Final = "https://github.com/pixari/OpenTodo/blob/main/docs/home-assistant.md"
+DOCS_URL: Final = "https://github.com/OpenTodoApp/OpenTodo/blob/main/docs/home-assistant.md"
