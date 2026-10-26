@@ -8,10 +8,10 @@
   "dependencies": [
     "webhook"
   ],
-  "documentation": "https://github.com/pixari/opentodo-homeassistant",
+  "documentation": "https://github.com/OpenTodoApp/opentodo-homeassistant",
   "integration_type": "service",
   "iot_class": "local_push",
-  "issue_tracker": "https://github.com/pixari/opentodo-homeassistant/issues",
+  "issue_tracker": "https://github.com/OpenTodoApp/opentodo-homeassistant/issues",
   "requirements": [],
   "version": "0.1.0"
 }
