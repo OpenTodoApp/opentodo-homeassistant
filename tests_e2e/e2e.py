@@ -20,7 +20,7 @@ from __future__ import annotations
 
 import asyncio
 import contextlib
-from datetime import date, timedelta
+from datetime import datetime, timedelta
 import json
 import os
 from pathlib import Path
@@ -29,6 +29,7 @@ import sys
 import tempfile
 import time
 from typing import Any
+from zoneinfo import ZoneInfo
 
 import aiohttp
 
@@ -48,6 +49,13 @@ HA_URL = f"http://127.0.0.1:{HA_PORT}"
 OT_URL = f"http://127.0.0.1:{OT_PORT}"
 CLIENT_ID = f"{HA_URL}/"
 ROOT = Path(__file__).resolve().parent.parent
+TIME_ZONE = "Europe/Rome"
+
+
+def local_today():
+    """Today as Home Assistant and OpenTodo see it (both run in TIME_ZONE), not the runner's UTC date."""
+    return datetime.now(ZoneInfo(TIME_ZONE)).date()
+
 
 CONFIGURATION = f"""
 homeassistant:
@@ -281,7 +289,7 @@ async def run() -> None:
         await ot.api(
             "POST",
             "/tasks",
-            {"title": "Water plants", "project_id": home["id"], "due": {"date": date.today().isoformat()}},
+            {"title": "Water plants", "project_id": home["id"], "due": {"date": local_today().isoformat()}},
         )
         step("OpenTodo owner, full token, Home project and private network targets ready")
 
@@ -369,7 +377,7 @@ async def run() -> None:
             "POST", "/api/services/todo/add_item", {"entity_id": "todo.inbox", "item": "milk tomorrow #Home p1"}
         )
         milk = await ot.task("milk")
-        tomorrow = (date.today() + timedelta(days=1)).isoformat()
+        tomorrow = (local_today() + timedelta(days=1)).isoformat()
         assert (
             milk and milk["project_id"] == home["id"] and milk["priority"] == 1 and milk["due"] == {"date": tomorrow}
         ), milk
