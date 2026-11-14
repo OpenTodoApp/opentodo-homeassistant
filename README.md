@@ -1,6 +1,6 @@
 # OpenTodo for Home Assistant
 
-A Home Assistant integration for [OpenTodo](https://github.com/OpenTodoApp/OpenTodo), the self-hosted task manager. It shows your OpenTodo lists as Home Assistant to-do lists, counts what is due, puts dated tasks on a calendar, and fires events when tasks change, so automations can react.
+A Home Assistant integration for [OpenTodo](https://open-todo.app), the self-hosted task manager ([source](https://github.com/OpenTodoApp/OpenTodo)). It shows your OpenTodo lists as Home Assistant to-do lists, counts what is due, puts dated tasks on a calendar, and fires events when tasks change, so automations can react.
 
 It talks only to your own OpenTodo server. It needs no extra Python packages and sends nothing anywhere else.
 
@@ -92,7 +92,7 @@ actions:
 - The calendar is read-only and shows each repeating task's next occurrence only.
 - A shared project where you are a viewer shows its tasks, but changes are refused with OpenTodo's message.
 
-The [OpenTodo guide](https://github.com/OpenTodoApp/OpenTodo/blob/main/docs/home-assistant.md) has more, with automation examples.
+The [OpenTodo guide](https://open-todo.app/docs/home-assistant/) has more, with automation examples.
 
 ## Development
 
